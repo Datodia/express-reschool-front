@@ -17,6 +17,32 @@ export default function Home() {
     const [updatePostTitle, setUpdatePostTitle] = useState('')
     const [updatePostContent, setUpdatePostContent] = useState('')
 
+    const products = [
+        {
+            id: 1,
+            productName: "Iphone 14 pro max",
+            amount: 250000,
+            description: "test descr"
+        },
+        {
+            id: 2,
+            productName: "Maxbook 3 pro ",
+            amount: 550000,
+            description: "test descr"
+        },
+        {
+            id: 3,
+            productName: "Iphone 12 pro max",
+            amount: 150000,
+            description: "test descr"
+        }, {
+            id: 1,
+            productName: "Iphone 13 pro max",
+            amount: 350000,
+            description: "test descr"
+        }
+    ]
+
     const getUser = async () => {
         const resp = await fetch(`${import.meta.env.VITE_SERVER_URL}/auth/current-user`, {
             headers: {
@@ -169,8 +195,35 @@ export default function Home() {
     }
 
 
+    const handlePay = async () => {
+        const resp = await fetch(`${import.meta.env.VITE_SERVER_URL}/stripe/buy-phone`, {
+            method: "POST"
+        })
+        const data = await resp.json()
+        console.log(data, "data")
+        window.location.href = data.url
+    }
+
+    const handleCheckout = async (product) => {
+        const resp = await fetch(`${import.meta.env.VITE_SERVER_URL}/stripe/checkout`, {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(product)
+        })
+        const data = await resp.json()
+        window.location.href = data.url
+    }
+
     return (
         <div>
+            <h1>Stripe</h1>
+            <button onClick={handlePay}>Buy Phone</button>
+
+
+
+
             {showModal && <div onClick={() => {
                 setShowModal(false)
                 setPostId(null)
@@ -182,11 +235,11 @@ export default function Home() {
                         value={updatePostTitle}
                         onChange={(e) => setUpdatePostTitle(e.target.value)}
                     />
-                    <input 
-                        type="text" 
-                        className='border-2 ' 
-                        value={updatePostContent} 
-                        onChange={(e) => setUpdatePostContent(e.target.value)} 
+                    <input
+                        type="text"
+                        className='border-2 '
+                        value={updatePostContent}
+                        onChange={(e) => setUpdatePostContent(e.target.value)}
                     />
                     <button>Update</button>
                 </form>
@@ -208,6 +261,17 @@ export default function Home() {
                     </Link>
                     <button onClick={handleLogOut} className='p-2 bg-red-500 rounded-2xl cursor-pointer'>Log out</button>
                 </div>
+            </div>
+
+            <div>
+                {products.map(el => (
+                    <div key={el.id} className='p-2 border rounded-2xl'>
+                        <h1>{el.productName}</h1>
+                        <h1>{el.amount / 100}$</h1>
+                        <p>{el.description}</p>
+                        <button className='bg-green-400 p-2' onClick={() => handleCheckout(el)}>Buy</button>
+                    </div>
+                ))}
             </div>
 
             <form onSubmit={handleCreatePost} className='w-[300px] mx-auto flex flex-col gap-2'>
