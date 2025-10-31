@@ -77,7 +77,7 @@ export default function SignIn() {
 
                 <button className='p-2 bg-blue-500'>{loading ? 'loading..' : 'Sign-in'}</button>
             </form>
-            <Link to={'http://localhost:3000/auth/google'}>Continue With google</Link>
+            <Link to={`${import.meta.env.VITE_SERVER_URL}/auth/google`}>Continue With google</Link>
 
             <h2>dont have an account? <Link to={'/sign-up'}>Sign-up</Link></h2>
         </div>
