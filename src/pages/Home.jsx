@@ -44,13 +44,21 @@ export default function Home() {
     ]
 
     const getUser = async () => {
-        const resp = await fetch(`${import.meta.env.VITE_SERVER_URL}/auth/current-user`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
+        try {
+
+            const resp = await fetch(`${import.meta.env.VITE_SERVER_URL}/auth/current-user`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (resp.status !== 200) {
+                navigate('/sign-in')
             }
-        })
-        const data = await resp.json()
-        setUser(data)
+            const data = await resp.json()
+            setUser(data)
+        } catch (e) {
+            navigate('/sign-in')
+        }
     }
 
     const getPosts = async () => {
@@ -208,7 +216,8 @@ export default function Home() {
         const resp = await fetch(`${import.meta.env.VITE_SERVER_URL}/stripe/checkout`, {
             method: "POST",
             headers: {
-                'content-type': 'application/json'
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(product)
         })
@@ -295,7 +304,7 @@ export default function Home() {
             </form>
 
             <div className='border-2 mt-4 p-2 border-black grid grid-cols-3 gap-2'>
-                {posts.map(el => (
+                {posts?.map(el => (
                     <div key={el._id} className='border-2 border-black p-2 rounded-sm'>
                         <h1>{el.title}</h1>
                         <h1>{el.content}</h1>

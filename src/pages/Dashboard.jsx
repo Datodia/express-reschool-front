@@ -18,6 +18,9 @@ export default function Dashboard() {
                 'Authorization': `Bearer ${token}`
             }
         })
+        if(resp.status !== 200){
+            navigate('/')
+        }
         const data = await resp.json()
 
         if (data.role !== 'admin') {
